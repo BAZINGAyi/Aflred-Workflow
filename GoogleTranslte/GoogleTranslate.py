@@ -5,8 +5,7 @@ import sys
 import re
 import json
 
-ICON_DEFAULT = 'icon.png'
-
+################################################ 获取验证的部分开始 ###################################################
 def get_res_tk(url):
     from lib import requests
     try:
@@ -65,7 +64,9 @@ def get_tk_request(text):
             }
         """)
     return ctx.call('tk', text, tkk)
+################################################ 获取验证的部分结束 ###################################################
 
+################################################ 请求翻译的部分开始 ####################################################
 headers = {
     'Host': 'translate.google.cn',
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0',
@@ -79,6 +80,7 @@ headers = {
     'Cache-Control': 'max-age=0'
 }
 
+# 参数规定是原语言和目的翻译的语言
 params = {
     'client': 't', 'sl': 'zh-CN', 'tl': 'en', 'hl': 'zh-CN',
     'dt': 'at', 'dt': 'bd', 'dt': 'ex', 'dt': 'ld', 'dt': 'md',
@@ -87,7 +89,9 @@ params = {
     'tsel': '0', 'kc': '1', 'tk': '376032.257956'
 }
 
-def get_res(url, data, params):
+ICON_DEFAULT = 'icon.png'
+
+def get_res(url, data):
     from lib import requests
     try:
         res = requests.post(url, headers=headers, data=data, params=params, timeout=2)
@@ -96,19 +100,15 @@ def get_res(url, data, params):
     except Exception as ex:
         return None
 
-
 def parse_json(res):
     return json.loads(res)
 
-
 def translate(text):
-    global params
-
     url = 'https://translate.google.cn/translate_a/single'
     data = {'q': text}
     try:
         params['tk'] = get_tk_request(text)
-        res = get_res(url, data, params)
+        res = get_res(url, data)
         if res == None:
             return None
         ret_list = parse_json(res.text)
@@ -118,9 +118,8 @@ def translate(text):
 
 def main(wf):
     # workflow 写法导入第三方库文件，并且需要在 lib 下定义一个 __init__.py
+    input_content = sys.argv[1]
 
-    #input_content = sys.argv[1]
-    input_content = "你是个好人"
     if input_content != "":
         res = translate(input_content)
         if res == None:
@@ -147,3 +146,4 @@ if __name__ == '__main__':
     wf = Workflow(libraries=['./lib'])
     logger = wf.logger
     sys.exit(wf.run(main))
+################################################ 请求翻译的部分结束 ####################################################
