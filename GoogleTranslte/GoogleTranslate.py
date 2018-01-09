@@ -116,11 +116,25 @@ def translate(text):
     except Exception as ex:
         return None
 
+# 判断是否包含中文
+def check_contain_chinese(check_str):
+    for ch in check_str.decode('utf-8'):
+        if u'\u4e00' <= ch <= u'\u9fff':
+            return True
+        return False
+
 def main(wf):
     # workflow 写法导入第三方库文件，并且需要在 lib 下定义一个 __init__.py
-    input_content = sys.argv[1]
+    #input_content = sys.argv[1]
+    input_content = '我爱你'
 
     if input_content != "":
+        # 调整翻译的源语言和目的语言
+        isChinese = check_contain_chinese(input_content)
+        if isChinese == False:
+            params['sl'] = 'en'
+            params['tl'] = 'zh-CN'
+
         res = translate(input_content)
         if res == None:
             translate_after_sentence = "ERROR"
