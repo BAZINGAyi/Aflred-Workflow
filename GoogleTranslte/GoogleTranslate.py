@@ -10,7 +10,7 @@ def get_res_tk(url):
     from lib import requests
     try:
         res = requests.get(url, timeout = 1.5)
-        res.raise_for_status()
+        print res.raise_for_status()
         return res
     except Exception:
         return res
@@ -125,8 +125,7 @@ def check_contain_chinese(check_str):
 
 def main(wf):
     # workflow 写法导入第三方库文件，并且需要在 lib 下定义一个 __init__.py
-    #input_content = sys.argv[1]
-    input_content = '我爱你'
+    input_content = sys.argv[1]
 
     if input_content != "":
         # 调整翻译的源语言和目的语言
@@ -137,8 +136,8 @@ def main(wf):
 
         res = translate(input_content)
         if res == None:
-            translate_after_sentence = "ERROR"
-            translate_before_sentence = "服务器出错，未成功翻译"
+            translate_after_sentence = u"ERROR"
+            translate_before_sentence = u"访问服务器出现错误，请在网页上校验翻译是否成功"
         else:
             # 翻译的内容可能是一篇文章（包含 \n ），所有这里需要遍历结果
             # 但使用 workflow 一般是翻译一句话和一个单词，因此只取第一个结果
